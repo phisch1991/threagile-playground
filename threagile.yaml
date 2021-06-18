@@ -35,8 +35,8 @@ data_assets:
 
 technical_assets:
 
-  Frontend:
-    id: frontend
+  Browser:
+    id: browser
     description: Web frontend
     type: process
     usage: business 
@@ -44,21 +44,20 @@ technical_assets:
     size: component
     technology: browser
     internet: true
-    machine: container 
+    machine: physical 
     encryption: none 
-    owner: Tester Inc.
+    multi_tenant: false
+    redundant: true
     confidentiality: internal
     integrity: important
     availability: important
-    multi_tenant: false
-    redundant: true
     data_assets_processed:
       - books
       - sales
     communication_links:
       Backend API Traffic:
-        target: backend
-        description: Link to the backend API
+        target: app
+        description: Link to the web app server
         protocol: https
         authentication: session-id
         authorization: enduser-identity-propagation
@@ -72,23 +71,24 @@ technical_assets:
           - books
           - sales
 
-  Backend API:
-    id: backend
-    description: API Server as a backend system
+  App:
+    id: app
+    description: Web / App Server
     type: process
     usage: business 
+    used_as_client_by_human: true
     size: component
-    technology: web-service-rest
+    technology: web-server
     internet: true
-    machine: container
-    encryption: none
+    machine: container 
+    encryption: none 
     owner: Tester Inc.
-    confidentiality: confidential
+    confidentiality: internal
     integrity: important
     availability: important
     multi_tenant: false
     redundant: true
-    data_assets_processed: # sequence of IDs to reference
+    data_assets_processed:
       - books
       - sales
     communication_links:
@@ -139,8 +139,7 @@ trust_boundaries:
     description: Demilitarized Zone
     type: network-cloud-security-group
     technical_assets_inside: # sequence of IDs to reference
-      - frontend
-      - backend
+      - app
 
   Datacenter:
     id: datacenter
