@@ -1,0 +1,158 @@
+threagile_version: 1.0.0
+
+title: Bookshop web application
+
+date: 2021-06-02
+
+author:
+  name: Theo Tester
+
+business_criticality: critical
+
+data_assets:
+
+  Books:
+    id: books
+    description: Book Metadata
+    usage: business
+    owner: Tester Inc.
+    quantity: many
+    confidentiality: public
+    integrity: important
+    availability: important
+    justification_cia_rating: Data are publicly available, however serving the data is important for our business
+
+  Sales:
+    id: sales
+    description: Data about book sales
+    usage: business
+    owner: Tester Inc.
+    quantity: many
+    confidentiality: confidential
+    integrity: important
+    availability: important
+    justification_cia_rating: Data contain GDPR-related customer data and are considered confidential
+
+technical_assets:
+
+  Frontend:
+    id: frontend
+    description: Web frontend
+    type: process
+    usage: business 
+    used_as_client_by_human: true
+    size: component
+    technology: browser
+    internet: true
+    machine: container 
+    encryption: none 
+    owner: Tester Inc.
+    confidentiality: internal
+    integrity: important
+    availability: important
+    multi_tenant: false
+    redundant: true
+    data_assets_processed:
+      - books
+      - sales
+    communication_links:
+      Backend API Traffic:
+        target: backend
+        description: Link to the backend API
+        protocol: https
+        authentication: session-id
+        authorization: enduser-identity-propagation
+        vpn: false
+        ip_filtered: false
+        readonly: false
+        usage: business
+        data_assets_sent:
+          - sales
+        data_assets_received:
+          - books
+          - sales
+
+  Backend API:
+    id: backend
+    description: API Server as a backend system
+    type: process
+    usage: business 
+    size: component
+    technology: web-service-rest
+    internet: true
+    machine: container
+    encryption: none
+    owner: Tester Inc.
+    confidentiality: confidential
+    integrity: important
+    availability: important
+    multi_tenant: false
+    redundant: true
+    data_assets_processed: # sequence of IDs to reference
+      - books
+      - sales
+    communication_links:
+      Database Traffic:
+        target: database
+        description: Read and write books and sales data to/from database
+        protocol: jdbc-encrypted
+        authentication: credentials
+        authorization: technical-user
+        usage: business
+        data_assets_sent:
+          - books
+          - sales
+        data_assets_received:
+          - books
+          - sales
+
+  Database Server:
+    id: database
+    description: Database server for books and sales
+    type: process
+    usage: business 
+    size: component
+    technology: database
+    internet: false
+    machine: serverless
+    encryption: data-with-symmetric-shared-key
+    owner: Tester Inc.
+    confidentiality: confidential
+    integrity: important
+    availability: important
+    data_assets_stored:
+      - books
+      - sales
+
+trust_boundaries:
+
+  Corporate Network:
+    id: corporatenetwork
+    description: All networks of Tester Inc.
+    type: network-cloud-security-group
+    trust_boundaries_nested:
+      - dmz
+      - datacenter
+
+  DMZ:
+    id: dmz
+    description: Demilitarized Zone
+    type: network-cloud-security-group
+    technical_assets_inside: # sequence of IDs to reference
+      - frontend
+      - backend
+
+  Datacenter:
+    id: datacenter
+    description: Data center
+    type: network-cloud-security-group
+    technical_assets_inside: 
+      - database
+
+risk_tracking:
+  sql-nosql-injection@*:
+    status: mitigated
+    date: 2021-06-20
+    checked_by: Theo Tester
+    justification: We use a database access library to prevent injection attacks
+    ticket: JIRA-1234
