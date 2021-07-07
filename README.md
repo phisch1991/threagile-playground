@@ -28,4 +28,4 @@ mkdir target
 threagile -model /app/work/threagile.yaml -output /app/work/target
 ```
 
-- Explore the resulting files in `./bahnid|devops-target` folder
+- Explore the resulting files in `./target` folder
